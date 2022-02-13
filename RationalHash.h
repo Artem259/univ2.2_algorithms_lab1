@@ -6,36 +6,31 @@
 #define RATIONALHASH_H
 
 #include <vector>
+#include <cmath>
 #include "Rational.h"
 
 class RationalHash
 {
 private:
-    struct Secondary
-    {
-        size_t a, b, m; //параметри хешування у вторинну таблицю
-        std::vector<Cell> cells; //комірки для хешування у вторинній таблиці
-    };
     struct Cell
     {
         std::vector<Rational> data; //хешований у комірку вектор
     };
-    size_t vP; //параметр хешування вектора в число
+    struct Secondary
+    {
+        size_t a, b, m; //параметри хешування у вторинну таблицю
+        Cell *cells; //комірки для хешування у вторинній таблиці
+    };
+    std::vector<size_t> vP; //коефіцієнти згортки вектора в число
     size_t A, B, P, M; //параметри хешування у первинну таблицю
-    std::vector<Secondary> secondaryTables;
+    Secondary *secondaryTables;
+
+    static bool isPrime(const size_t& n);
+    static size_t nearestPrime(const size_t& n);
+    size_t vectorsCompression(const std::vector<Rational>& v);
 public:
     explicit RationalHash(const std::vector<std::vector<Rational>>& input);
     bool contains(const std::vector<Rational>& n);
 };
-
-RationalHash::RationalHash(const std::vector<std::vector<Rational>>& input)
-{
-
-}
-
-bool RationalHash::contains(const std::vector<Rational>& n)
-{
-
-}
 
 #endif
