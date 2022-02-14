@@ -19,15 +19,19 @@ private:
     struct Secondary
     {
         size_t a, b, m; //параметри хешування у вторинну таблицю
-        Cell *cells; //комірки для хешування у вторинній таблиці
+        std::vector<Cell> cells; //комірки для хешування у вторинній таблиці
     };
-    std::vector<size_t> vP; //коефіцієнти згортки вектора в число
+    std::vector<size_t> randomVec; //коефіцієнти згортки вектора в число (випадкові)
     size_t A, B, P, M; //параметри хешування у первинну таблицю
-    Secondary *secondaryTables;
+    std::vector<Secondary> secondaryTables;
 
+    static size_t randN(const size_t& min, const size_t& max);
+    static size_t randomVecNGen();
     static bool isPrime(const size_t& n);
     static size_t nearestPrime(const size_t& n);
-    size_t vectorsCompression(const std::vector<Rational>& v);
+    size_t vectorCompression(const std::vector<Rational>& v);
+    std::vector<size_t> inputVectorsCompression(const std::vector<std::vector<Rational>>& v);
+    void hashing(const std::vector<std::vector<Rational>>& inputV, const std::vector<size_t>& numbersV);
 public:
     explicit RationalHash(const std::vector<std::vector<Rational>>& input);
     bool contains(const std::vector<Rational>& n);
