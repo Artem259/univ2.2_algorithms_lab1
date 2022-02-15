@@ -11,10 +11,6 @@ size_t RationalHash::randN(const size_t& min, const size_t& max)
 {
     return min+(rand()%(max-min+1));
 }
-size_t RationalHash::randomVecNGen()
-{
-    return randN(1,1000);
-}
 bool RationalHash::isPrime(const size_t& n)
 {
     size_t square = ceil(sqrt(n));
@@ -61,41 +57,55 @@ std::pair<size_t, size_t> RationalHash::findRepeatingNumbers(const std::vector<s
     return res;
 }
 
-size_t RationalHash::vectorCompression(const std::vector<Rational>& v)
+size_t RationalHash::vectorCompression(const std::vector<Rational>& v) const
 {
-    assert((!v.empty()) && v.size()<=randomVec.size());
-    size_t res = 0;
-    for(size_t i=0; i<v.size(); i++)
+    size_t res=0, k=1;
+    std::vector<size_t> helpV(2);
+    for(auto &i : v)
     {
-        if(v[i].denominator+v[i].numerator!=0)
-            res += (v[i].denominator+v[i].numerator)*randomVec[i];
-        else
-            res += (v[i].denominator*v[i].numerator)*randomVec[i];
+        helpV[0] = i.numerator;
+        helpV[1] = i.denominator;
+        for(auto &j : helpV)
+        {
+            res += (j+pShift)*k;
+            k *= pK;
+        }
     }
     return res;
 }
 std::vector<size_t> RationalHash::inputVectorsCompression(const std::vector<std::vector<Rational>>& input)
 {
-    size_t max = 0;
-    for(auto &v : input)
+    assert(!input[0].empty());
+    long long min=input[0][0].numerator, max=input[0][0].numerator;
+    std::vector<long long> v(2);
+    for(auto &i : input)
     {
-        if(v.size()>max) max=v.size();
+        assert(!i.empty());
+        for(auto &k : i)
+        {
+            v[0] = k.numerator;
+            v[1] = k.denominator;
+            for(auto &n : v)
+            {
+                if(n<min) min=n;
+                if(n>max) max=n;
+            }
+        }
     }
-    randomVec.resize(max);
-    std::generate(randomVec.begin(), randomVec.end(), RationalHash::randomVecNGen);
+    pShift = -min+1;
+    pK = nearestPrime(max+pShift);
 
-    size_t square = M*M;
     std::vector<size_t> res(input.size());
     while(true)
     {
         for(size_t i=0; i<input.size(); i++)
         {
-            res[i] = vectorCompression(input[i])%square + 1;
+            res[i] = vectorCompression(input[i]);
         }
         std::pair<size_t, size_t> repeating = findRepeatingNumbers(res);
         if(repeating == std::pair<size_t, size_t>{0,0}) break;
         assert(input[repeating.first] != input[repeating.second]);
-        randomVec[0] = randomVecNGen();
+        pK = nearestPrime(pK);
     }
     return res;
 }
@@ -163,14 +173,15 @@ void RationalHash::hashing(const std::vector<std::vector<Rational>>& inputV, con
 RationalHash::RationalHash(const std::vector<std::vector<Rational>>& input)
 {
     srand(time(nullptr));
+    for(int i=0;i<100;i++)
+    {
+        std::cout<<randN(1,10000000)<<std::endl;
+    }
     M = input.size();
-
-    auto numbers = inputVectorsCompression(input); //randomVec
+    auto numbers = inputVectorsCompression(input);
     hashing(input, numbers); //P,A,B, secondaryTables
 }
 bool RationalHash::contains(const std::vector<Rational>& n)
 {
 
 }
-
-
