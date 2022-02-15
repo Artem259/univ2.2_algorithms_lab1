@@ -29,7 +29,7 @@ private:
     static size_t randomVecNGen();
     static bool isPrime(const size_t& n);
     static size_t nearestPrime(const size_t& n);
-    static bool allUniqueNumbers(const std::vector<size_t>& v);
+    static std::pair<size_t, size_t> findRepeatingNumbers(const std::vector<size_t>& v);
     size_t vectorCompression(const std::vector<Rational>& v);
     std::vector<size_t> inputVectorsCompression(const std::vector<std::vector<Rational>>& v);
     void hashing(const std::vector<std::vector<Rational>>& inputV, const std::vector<size_t>& numbersV);
