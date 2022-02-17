@@ -172,16 +172,18 @@ void RationalHash::hashing(const std::vector<std::vector<Rational>>& inputV, con
 }
 RationalHash::RationalHash(const std::vector<std::vector<Rational>>& input)
 {
+    assert(!input.empty());
     srand(time(nullptr));
-    for(int i=0;i<100;i++)
-    {
-        std::cout<<randN(1,10000000)<<std::endl;
-    }
     M = input.size();
     auto numbers = inputVectorsCompression(input);
     hashing(input, numbers); //P,A,B, secondaryTables
 }
-bool RationalHash::contains(const std::vector<Rational>& n)
+bool RationalHash::contains(const std::vector<Rational>& v)
 {
-
+    size_t compressed = vectorCompression(v);
+    size_t primaryCell = ((A*compressed+B)%P)%M;
+    if(secondaryTables[primaryCell].m == 0) return false;
+    size_t secondaryCell = ((secondaryTables[primaryCell].a*compressed+secondaryTables[primaryCell].b)%P)%secondaryTables[primaryCell].m;
+    if(secondaryTables[primaryCell].cells[secondaryCell].data == v) return true;
+    return false;
 }

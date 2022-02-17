@@ -34,7 +34,7 @@ private:
     void hashing(const std::vector<std::vector<Rational>>& inputV, const std::vector<size_t>& numbersV);
 public:
     explicit RationalHash(const std::vector<std::vector<Rational>>& input);
-    bool contains(const std::vector<Rational>& n);
+    bool contains(const std::vector<Rational>& v);
 };
 
 #endif
