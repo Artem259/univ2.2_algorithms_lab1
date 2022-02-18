@@ -1,8 +1,6 @@
 #include <iostream>
 #include "RationalHash.h"
 
-#include <algorithm>
-
 
 int main()
 {
